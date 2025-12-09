@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780" role="img" aria-labelledby="title desc">
+  <title id="title">Japan Tok салбаруудын байрлал</title>
+  <desc id="desc">Улаанбаатарын тойм газрын зураг дээр 6 салбар тэмдэглэсэн</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f5f7fb"/>
+      <stop offset="100%" stop-color="#e8edf5"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fb923c"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="rgba(15,23,42,0.18)"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="780" fill="url(#bg)"/>
+
+  <!-- Roads -->
+  <g stroke="url(#road)" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <path d="M120 520 C 280 440, 420 430, 620 470"/>
+    <path d="M220 400 C 420 360, 560 300, 720 260"/>
+    <path d="M420 560 C 640 540, 840 520, 1100 500"/>
+    <path d="M820 360 C 940 330, 1060 320, 1200 330"/>
+    <path d="M720 260 C 880 250, 1000 240, 1160 240"/>
+    <path d="M880 520 C 940 460, 1020 440, 1180 440"/>
+  </g>
+
+  <!-- River-ish strip -->
+  <path d="M450 610 C 640 650, 860 640, 1080 600" stroke="#60a5fa" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.35"/>
+
+  <!-- Markers -->
+  <g font-family="Manrope, 'Segoe UI', sans-serif">
+    <!-- 5 Шар -->
+    <g transform="translate(190 520)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+    <!-- Содон -->
+    <g transform="translate(340 430)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+    <!-- Зурагт -->
+    <g transform="translate(500 290)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+    <!-- Төв I, II -->
+    <g transform="translate(760 370)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+    <!-- 32 -->
+    <g transform="translate(1080 310)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+    <!-- Амгалан -->
+    <g transform="translate(1220 460)" filter="url(#shadow)">
+      <circle cx="0" cy="0" r="18" fill="#e63946"/>
+      <circle cx="0" cy="0" r="8" fill="#fff"/>
+    </g>
+  </g>
+
+  <!-- Labels -->
+  <g font-family="Manrope, 'Segoe UI', sans-serif" font-weight="700" fill="#0f172a">
+    <rect x="50" y="470" rx="14" ry="14" width="210" height="70" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="70" y="505" font-size="18">5 Шар салбар</text>
+    <text x="70" y="530" font-size="14" font-weight="600" fill="#111827">BSB дэлгүүрийн замын эсрэг талд</text>
+
+    <rect x="230" y="380" rx="14" ry="14" width="210" height="70" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="250" y="415" font-size="18">Содон салбар</text>
+    <text x="250" y="440" font-size="14" font-weight="600" fill="#111827">Содон хорооллын ард замын эсрэг талд</text>
+
+    <rect x="390" y="240" rx="14" ry="14" width="220" height="70" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="410" y="275" font-size="18">Зурагт салбар</text>
+    <text x="410" y="300" font-size="14" font-weight="600" fill="#111827">МҮОНРТ-ээс хойш 200 м</text>
+
+    <rect x="640" y="320" rx="14" ry="14" width="240" height="80" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="660" y="355" font-size="18">Төв I, II салбар</text>
+    <text x="660" y="380" font-size="14" font-weight="600" fill="#111827">МУИС-ийн баруун урд талд / Гандан талдаа</text>
+
+    <rect x="970" y="250" rx="14" ry="14" width="210" height="70" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="990" y="285" font-size="18">32 салбар</text>
+    <text x="990" y="310" font-size="14" font-weight="600" fill="#111827">Sansar супермаркетийн замын эсрэг талд</text>
+
+    <rect x="1080" y="420" rx="14" ry="14" width="230" height="70" fill="#fff" stroke="#e5e7eb" filter="url(#shadow)"/>
+    <text x="1100" y="455" font-size="18">Амгалан салбар</text>
+    <text x="1100" y="480" font-size="14" font-weight="600" fill="#111827">Оргил худалдааны төвийн замын эсрэг талд</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(60 70)">
+    <rect x="0" y="0" width="260" height="64" rx="14" fill="#0f172a" opacity="0.9"/>
+    <text x="20" y="30" font-family="Manrope, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#fff">6 салбар • Хот доторх хүргэлт</text>
+    <text x="20" y="50" font-family="Manrope, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">Japan TOK Mongolia</text>
+  </g>
+</svg>

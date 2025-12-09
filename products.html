@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Japan TOK Mongolia – Бэлэн OEM чанартай авто сэлбэгийн каталог. Машины марк эсвэл OEM кодоор хайж, шууд үйлдвэрээс нийлүүлнэ." />
+  <meta property="og:title" content="Japan TOK Mongolia | Барааны жагсаалт" />
+  <meta property="og:description" content="OEM чанартай авто сэлбэгийн каталог. Машины марк, OEM, VIN тааруулалттай." />
+  <meta property="og:image" content="assets/japan-tok-facebook-wide.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Japan Tok Mongolia | Барааны жагсаалт</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="products">
+  <header class="topbar">
+    <div class="container nav">
+      <div class="logo">
+        <img
+          src="assets/japan-tok-facebook-square.jpg"
+          alt="Japan Tok Mongolia logo"
+          class="logo-mark"
+          onerror="this.src='assets/japan-tok-logo.svg'"
+        />
+        <div class="logo-text">
+          <span>Japan Tok</span>
+          <small>Mongolia</small>
+        </div>
+      </div>
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Цэс</button>
+      <nav id="primary-nav" class="nav-links">
+        <a href="index.html">Бидний тухай</a>
+        <a href="products.html" class="active">Барааны жагсаалт</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero hero--about">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Барааны жагсаалт</p>
+        <h1>Бэлэн Japan TOK сэлбэг</h1>
+        <p class="lead">
+          Машины марк эсвэл сэлбэгийн нэрээ бичээд шууд үзнэ үү.
+        </p>
+        <div class="hero-actions">
+          <a href="#product-catalog" class="btn-primary">Каталог руу очих</a>
+          <div class="hero-badges">
+            <span class="pill">Өргөн сонголт</span>
+            <span class="pill">Баталгаатай гарал үүсэл</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <strong>24/7</strong>
+            <span>Бэлэн нөөц, шууд таны гарт </span>
+          </div>
+          <div class="stat">
+            <strong>OEM</strong>
+            <span>Үйлдвэрийн чанарын шалгуур</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-image hero-image--brand">
+          <div class="hero-label">
+            <span>Japan TOK</span>
+            <strong>Япон сэлбэг • Япон чанар</strong>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="card-chip">Каталог хайлт</div>
+          <p>Сэлбэгийн төрөл эсвэл машины маркаараа шүүгээд 1,500 хүртэл илэрц шуурхай харна.</p>
+          <div class="mini-metrics">
+            <span>✦ VIN &amp; OEM тааруулалт</span>
+            <span>✦ Бөөний, жижиглэнгийн үнэ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="product-catalog">
+    <div class="container">
+
+      <!-- Brand & model selection (Forever21-style navigation) -->
+      <header class="catalog-header">
+        <!-- Brand tabs -->
+        <div class="catalog-brand-bar">
+          <button class="brand-tab active" data-brand="all">Бүх брэнд</button>
+          <button class="brand-tab" data-brand="toyota">Toyota</button>
+          <button class="brand-tab" data-brand="lexus">Lexus</button>
+          <button class="brand-tab" data-brand="nissan">Nissan</button>
+          <button class="brand-tab" data-brand="subaru">Subaru</button>
+          <button class="brand-tab" data-brand="honda">Honda</button>
+          <button class="brand-tab" data-brand="chevrolet">Chevrolet</button>
+        </div>
+
+
+        <!-- Model dropdown (changes based on brand) -->
+        <div class="catalog-model-dropdown">
+          <button
+            class="model-dropdown__toggle"
+            id="model-toggle"
+            disabled
+          >
+            Машины маркаа сонгоно уу
+          </button>
+          <div class="model-dropdown__menu" id="model-menu"></div>
+        </div>
+
+        <!-- Search + count row -->
+        <div class="products-toolbar">
+          <input
+            type="text"
+            id="search"
+            placeholder="Сэлбэгийн нэр, машины марк, OEM код гэх мэтээр хайх..."
+          />
+          <span class="products-count" id="results-count">Ачаалж байна...</span>
+        </div>
+      </header>
+
+      <!-- Product tiles (Forever21-style cards) -->
+      <div class="products-grid" id="catalog"></div>
+
+      <p class="products-footnote">
+        * Үнийн мэдээлэл өөрчлөгдөж болох тул эцсийн үнийг утсаар баталгаажуулна уу.
+      </p>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Japan Tok Mongolia. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- CHATBOT START -->
+  <button id="chatbot-toggle" class="chat-toggle" type="button" aria-expanded="false" aria-label="Чатбот нээх">
+    <img src="assets/japan-tok-facebook-square.jpg" alt="Chatbot" loading="lazy" />
+  </button>
+
+  <div id="chatbot-container" class="chatbot-container" style="display: none;">
+    <iframe id="chatbot-frame" src="https://japantok-chatbot.vercel.app" title="Japan Tok chatbot" loading="lazy"></iframe>
+    <div id="chatbot-fallback" class="chatbot-fallback" hidden>
+      Чатбот түр алга байна. <a href="tel:99997571">99997571</a> дугаарт залгаарай.
+    </div>
+  </div>
+  <!-- CHATBOT END -->
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60" role="img" aria-labelledby="title">
+<title id="title">TOK Factory</title>
+<rect x="5" y="8" width="170" height="44" rx="12" fill="#0f172a"/>
+<path d="M26 40h26V22l-10 6v-6l-8 5v-5l-8 5v13z" fill="#e63946"/>
+<path d="M26 40h26" stroke="#f8fafc" stroke-width="2"/>
+<circle cx="32" cy="40" r="4" fill="#94a3b8"/>
+<circle cx="46" cy="40" r="4" fill="#94a3b8"/>
+<text x="75" y="35" font-family="Montserrat, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="#f8fafc">TOK Factory</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="60" viewBox="0 0 180 60" role="img" aria-labelledby="title">
+<title id="title">TOK Supply Chain</title>
+<rect x="5" y="8" width="170" height="44" rx="12" fill="#0b3b5b"/>
+<path d="M20 26h22v8H20z" fill="#e5e7eb" opacity="0.9"/>
+<path d="M42 28h18v8H42z" fill="#cbd5e1" opacity="0.95"/>
+<path d="M60 30h18v8H60z" fill="#94a3b8" opacity="0.95"/>
+<path d="M78 32h18v8H78z" fill="#e63946" opacity="0.95"/>
+<path d="M20 34h76" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"/>
+<text x="106" y="36" font-family="Montserrat, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#f8fafc">TOK Supply</text>
+</svg>
