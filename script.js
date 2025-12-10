@@ -4,12 +4,17 @@
 // Product normalization helpers
 // ------------------------------------------------------------
 
+// Google Sheet → published CSV URL
+const SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSvL5pvuXByZ-E3fzauAB2ah25rGMBOYPG4xae9z0TgwgS8NRv3b_hRxranQJwV5w/pub?gid=2145496180&single=true&output=csv";
+
+// ID ranges → category name
 const CATEGORY_RANGES = [
   { label: "5 бул", min: 1, max: 20 },
   { label: "3 бул", min: 21, max: 28 },
   { label: "Хагас гол", min: 29, max: 30 },
   { label: "Ком бул", min: 31, max: 34 },
-  { label: "Гармошик резин", min: 35, max: 58 },
+  { label: "Гармушик резин", min: 35, max: 58 },
   { label: "Цап / шарик", min: 59, max: 109 },
   { label: "Амортизатор", min: 110, max: 135 },
   { label: "Шарнер", min: 136, max: 150 },
@@ -19,6 +24,7 @@ const CATEGORY_RANGES = [
   { label: "Рулийн аппарат", min: 178, max: 179 },
   { label: "Втульк", min: 180, max: 185 }
 ];
+
 // Category → Image mapping
 const CATEGORY_IMAGES = {
   "5 бул": "assets/parts/5bul.jpg",
@@ -26,7 +32,7 @@ const CATEGORY_IMAGES = {
   "Ком бул": "assets/parts/kombul.jpg",
   "Гармошик резин": "assets/parts/garmoshka_rezin.jpg",
 
-  "Амортизатор": "assets/parts/amortizator_urd.jpg",   // generic shock
+  "Амортизатор": "assets/parts/amortizator_urd.jpg",
   "Босоо": "assets/parts/bosoo.jpg",
   "Өндөг": "assets/parts/undgun_tulguur.jpg",
   "Тяг": "assets/parts/ruliin_tyg.jpg",
@@ -90,12 +96,10 @@ const BRAND_MODELS = {
     { key: "outback", label: "Outback" }
   ],
   honda: [
-    // "honda fit гармушик"
     { key: "honda fit", label: "Fit" },
     { key: "fit", label: "Fit (other names)" }
   ],
   chevrolet: [
-    // "ГармушикCHEVROLET CRUZE"
     { key: "chevrolet cruze", label: "Cruze" },
     { key: "chevrolet", label: "Chevrolet (all)" },
     { key: "cruze", label: "Cruze (other spelling)" }
@@ -114,12 +118,19 @@ const BRAND_LABELS = {
 
 let products = [];
 
+// ------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------
+
 function cleanText(value) {
   return (value || "").toString().replace(/\s+/g, " ").trim();
 }
 
 function toNumber(value) {
-  const num = Number(value);
+  if (value == null) return null;
+  // remove spaces thousands separators if any
+  const normalized = value.toString().replace(/\s+/g, "");
+  const num = Number(normalized);
   return Number.isFinite(num) ? num : null;
 }
 
@@ -132,14 +143,21 @@ function deriveCategory(id) {
 }
 
 function derivePrice(item) {
+  // 1) Prefer price_wholesale_with_vat from sheet
   const withVat = toNumber(item.price_wholesale_with_vat);
   if (withVat) return Math.round(withVat);
 
+  // 2) Fallback: no_vat * 1.1
   const noVat = toNumber(item.price_wholesale_no_vat);
   if (noVat) return Math.round(noVat * 1.1);
 
+  // 3) Fallback: if you ever use price_wholesale_sheet2
   const sheet = toNumber(item.price_wholesale_sheet2);
   if (sheet) return Math.round(sheet * 1.1);
+
+  // 4) Last resort: price_retail if present
+  const retail = toNumber(item.price_retail);
+  if (retail) return Math.round(retail);
 
   return null;
 }
@@ -159,29 +177,85 @@ function normalizeProduct(item) {
   };
 }
 
+// ------------------------------------------------------------
+// CSV parsing + loadProducts
+// ------------------------------------------------------------
+
+// Simple CSV parser that understands quotes, commas, newlines
+function parseCSV(text) {
+  const rows = [];
+  let current = [];
+  let value = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i + 1];
+
+    if (c === '"') {
+      if (inQuotes && next === '"') {
+        value += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === "," && !inQuotes) {
+      current.push(value);
+      value = "";
+    } else if ((c === "\n" || c === "\r") && !inQuotes) {
+      if (value !== "" || current.length) {
+        current.push(value);
+        rows.push(current);
+        current = [];
+        value = "";
+      }
+      if (c === "\r" && next === "\n") i++;
+    } else {
+      value += c;
+    }
+  }
+
+  if (value !== "" || current.length) {
+    current.push(value);
+    rows.push(current);
+  }
+
+  return rows;
+}
+
 async function loadProducts() {
-  const response = await fetch("products_full.json");
-  if (!response.ok) throw new Error("products_full.json уншиж чадсангүй");
+  const response = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+  if (!response.ok) throw new Error("Google Sheet CSV уншиж чадсангүй");
 
-  const data = await response.json();
+  const csvText = await response.text();
+  const rows = parseCSV(csvText);
+  if (!rows.length) return [];
 
-  return data
+  const header = rows[0].map((h) => h.trim());
+  const dataRows = rows.slice(1);
+
+  const rawItems = dataRows
+    .filter((row) => row.some((cell) => (cell || "").trim() !== ""))
+    .map((row) => {
+      const obj = {};
+      header.forEach((key, idx) => {
+        if (!key) return;
+        obj[key] = row[idx] ?? "";
+      });
+      return obj;
+    });
+
+  return rawItems
     .map(normalizeProduct)
-    // remove header / demo / empty rows
     .filter((p) => {
-      // must have a positive id
       if (!p.id || p.id <= 0) return false;
-
-      // skip obvious header/demo names
       const name = (p.name || "").toLowerCase();
       if (name === "сэлбэгийн нэр") return false;
       if (name.startsWith("барааны нэр")) return false;
-
       return true;
     })
     .sort((a, b) => a.id - b.id);
 }
-
 
 // ------------------------------------------------------------
 // Formatting & rendering
@@ -191,10 +265,10 @@ function formatMNT(number) {
   if (!Number.isFinite(number)) return "";
   return number.toLocaleString("mn-MN") + " ₮";
 }
+
 function getProductImage(p) {
   const text = `${p.name} ${p.fit}`.toLowerCase();
 
-  // Text-based overrides first
   if (text.includes("3 бул")) return CATEGORY_IMAGES["3 бул"];
   if (text.includes("5 бул")) return CATEGORY_IMAGES["5 бул"];
   if (text.includes("ком бул")) return CATEGORY_IMAGES["Ком бул"];
@@ -202,11 +276,12 @@ function getProductImage(p) {
   if (text.includes("гармош")) return CATEGORY_IMAGES["Гармошик резин"];
   if (text.includes("тяг")) return CATEGORY_IMAGES["Тяг"];
   if (text.includes("шарнер")) return CATEGORY_IMAGES["Шарнер"];
-  if (text.includes("өндгөн") || text.includes("өндөг")) return CATEGORY_IMAGES["Өндөг"];
-  if (text.includes("цап") || text.includes("шарик")) return CATEGORY_IMAGES["Цап / шарик"];
+  if (text.includes("өндгөн") || text.includes("өндөг"))
+    return CATEGORY_IMAGES["Өндөг"];
+  if (text.includes("цап") || text.includes("шарик"))
+    return CATEGORY_IMAGES["Цап / шарик"];
   if (text.includes("босоо")) return CATEGORY_IMAGES["Босоо"];
 
-  // Fallback to derived category
   return (
     CATEGORY_IMAGES[p.category] ||
     CATEGORY_IMAGES["Бусад"] ||
@@ -235,7 +310,6 @@ function renderCatalog(list, options = {}) {
     .map((p) => {
       const priceLabel = p.price ? formatMNT(p.price) : "Утсаар лавлана";
 
-      // Shorten long product names a bit
       const MAX_NAME = 60;
       const displayName =
         p.name.length > MAX_NAME
@@ -246,7 +320,7 @@ function renderCatalog(list, options = {}) {
         ? `<span class="product-card__oem">OEM: ${p.oem}</span>`
         : "";
 
-const imgSrc = getProductImage(p);
+      const imgSrc = getProductImage(p);
 
       return `
         <article class="product-card">
@@ -278,7 +352,6 @@ const imgSrc = getProductImage(p);
     .join("");
 }
 
-
 // ------------------------------------------------------------
 // Brand + model filter helpers
 // ------------------------------------------------------------
@@ -290,18 +363,14 @@ function buildHaystackForProduct(p) {
 function productMatchesBrandAndModel(p, brand, modelKey) {
   const haystack = buildHaystackForProduct(p);
 
-  if (brand === "all" && !modelKey) {
-    return true;
-  }
+  if (brand === "all" && !modelKey) return true;
 
   const models = BRAND_MODELS[brand] || [];
 
-  // If a specific model is chosen: just check that key
   if (modelKey) {
     return haystack.includes(modelKey.toLowerCase());
   }
 
-  // Only brand chosen: match any of that brand's model keys
   if (brand !== "all" && models.length) {
     return models.some((m) => haystack.includes(m.key.toLowerCase()));
   }
@@ -318,11 +387,10 @@ function initProductCatalog() {
   if (!body || body.dataset.page !== "products") return;
 
   const searchInput = document.getElementById("search");
-  const categoryButtons = document.querySelectorAll(".category-btn"); // may be empty
+  const categoryButtons = document.querySelectorAll(".category-btn");
   const countEl = document.getElementById("results-count");
   const catalog = document.getElementById("catalog");
 
-  // New brand/model UI elements
   const brandTabs = document.querySelectorAll(".brand-tab");
   const modelMenu = document.getElementById("model-menu");
   const modelToggle = document.getElementById("model-toggle");
@@ -339,16 +407,13 @@ function initProductCatalog() {
     const q = currentQuery.trim().toLowerCase();
 
     const filtered = products.filter((p) => {
-      // brand & model filter
-      if (!productMatchesBrandAndModel(p, currentBrand, currentModelKey)) {
+      if (!productMatchesBrandAndModel(p, currentBrand, currentModelKey))
         return false;
-      }
 
-      // category (5 бул, 3 бул, etc.)
       const matchesCategory =
         currentCategory === "all" || p.category === currentCategory;
-
       if (!matchesCategory) return false;
+
       if (!q) return true;
 
       const haystack = buildHaystackForProduct(p);
@@ -357,8 +422,6 @@ function initProductCatalog() {
 
     renderCatalog(filtered);
   }
-
-  // --- Brand/model UI ---
 
   function buildModelMenu(brand) {
     if (!modelMenu) return;
@@ -381,9 +444,7 @@ function initProductCatalog() {
     modelButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         currentModelKey = btn.dataset.key || "";
-        if (modelToggle) {
-          modelToggle.textContent = btn.textContent;
-        }
+        if (modelToggle) modelToggle.textContent = btn.textContent;
         modelMenu.classList.remove("open");
         applyFilters();
       });
@@ -394,7 +455,6 @@ function initProductCatalog() {
     currentBrand = brand;
     currentModelKey = "";
 
-    // active state on tabs
     brandTabs.forEach((tab) => {
       const b = tab.dataset.brand || "all";
       tab.classList.toggle("active", b === brand);
@@ -403,7 +463,8 @@ function initProductCatalog() {
     if (modelToggle) {
       if (brand === "all") {
         modelToggle.disabled = true;
-        modelToggle.textContent = "Машины марка (эхлээд брэндээ сонгоно уу)";
+        modelToggle.textContent =
+          "Машины марка (эхлээд брэндээ сонгоно уу)";
         if (modelMenu) modelMenu.innerHTML = "";
       } else {
         modelToggle.disabled = false;
@@ -438,8 +499,6 @@ function initProductCatalog() {
     });
   });
 
-  // --- Old category buttons (if you add them later) ---
-
   categoryButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       categoryButtons.forEach((b) => b.classList.remove("active"));
@@ -465,7 +524,6 @@ function initProductCatalog() {
     .then((loaded) => {
       products = loaded;
       hasDataLoaded = true;
-      // default: all brands, no model
       setBrand("all");
       applyFilters();
     })
@@ -474,7 +532,7 @@ function initProductCatalog() {
       hasDataLoaded = false;
       renderCatalog([], {
         emptyMessage:
-          "Каталогыг ачаалж чадсангүй. products_full.json файлаа шалгана уу."
+          "Каталогыг ачаалж чадсангүй. Google Sheet / CSV тохиргоог шалгана уу."
       });
     });
 }
@@ -485,7 +543,6 @@ function initProductCatalog() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initProductCatalog();
-
   initMobileNav();
   initChatbotToggle();
 
@@ -516,9 +573,7 @@ function initMobileNav() {
 
   links.forEach((link) =>
     link.addEventListener("click", () => {
-      if (window.innerWidth <= 900) {
-        setOpen(false);
-      }
+      if (window.innerWidth <= 900) setOpen(false);
     })
   );
 }
@@ -541,7 +596,8 @@ function initChatbotToggle() {
   }
 
   toggle.addEventListener("click", () => {
-    const isHidden = container.style.display === "none" || container.style.display === "";
+    const isHidden =
+      container.style.display === "none" || container.style.display === "";
     setOpen(isHidden);
   });
 
