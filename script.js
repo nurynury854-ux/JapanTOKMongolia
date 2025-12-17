@@ -6,7 +6,7 @@
 
 // Google Sheet → published CSV URL
 const SHEET_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSvL5pvuXByZ-E3fzauAB2ah25rGMBOYPG4xae9z0TgwgS8NRv3b_hRxranQJwV5w/pub?gid=2145496180&single=true&output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSvL5pvuXByZ-E3fzauAB2ah25rGMBOYPG4xae9z0TgwgS8NRv3b_hRxranQJwV5w/pub?output=csv";
 
 // ID ranges → category name
 const CATEGORY_RANGES = [
